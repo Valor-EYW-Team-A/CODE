@@ -1,0 +1,23 @@
+#include <EYW.h>
+#include <Servo.h>
+#include <Wire.h>
+
+EYW:: Camera payloadservo;
+
+void setup()
+{
+payloadservo.begin();
+payloadservo.calibrate();
+payloadservo.alarm();
+payloadservo.beginTimer(10000);
+}
+
+void loop() 
+{
+  if (payloadservo.timerExpired()==true||payloadservo.buttonPressed()==true);
+  {
+    payloadservo.getPicture();
+    payloadservo.beginTimer(5000);
+  }
+
+}
