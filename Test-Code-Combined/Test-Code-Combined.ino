@@ -5,11 +5,55 @@ EYW::Altimeter myaltimeter; //myaltimeter is name of altimeter
 EYW::RangeFinder rangeSensor; //range Sensor is the name of range finder
 EYW::Camera payloadServo; //names servo payloadServo
 
+int c2 = 65;
+int d2 = 73;
+int e2 = 82;
+int f2 = 87;
+int g2 = 98;
+int a2 = 110;
+int b2 = 123;
+int c3 = 131;
+int d3 = 147;
+int e3 = 165;
+int f3 = 175;
+int g3 = 196;
+int a3 = 220;
+int b3 = 247;
+int c4 = 262;
+
+int c4s = 277;
+
+int d4 = 294;
+int e4 = 330;
+int f4 = 349;
+int g4 = 392;
+int a4 = 440;
+int b4 = 494;
+int c5 = 523;
+int d5 = 587;
+int e5 = 659;
+int f5 = 698;
+int g5 = 784;
+int a5 = 880;
+int b5 = 988;
+int c6 = 1047;
+int d6 = 1175;
+int e6 = 1319;
+int f6 = 1397;
+int g6 = 1568;
+int a6 = 1760;
+int b6 = 1976;
+
+// timings: 
+int qt = 476; //this is the length of a quarter note transcribed to 355 ms
+int eit = 238; //this is the length of a eighth note transcribed to 178 ms
+
+
 int distance = 0; //global variable distance equals 0
 float current_height = 0; //allows decimal variable, current_height
                           //set to 0
 
-
+bool reachedAltitude = false;
 
 
 void setup() {
@@ -34,7 +78,20 @@ void setup() {
   payloadServo.alarm(1, 700, 5000);// after calibration, alarm
                       //will sound for 1 tone at 700 hz for 5 seconds.
   //once 5 second alarm is over, we move on to the launch.
-
+ 
+  pinMode(5, OUTPUT); //pin 12 is an output for the music
+  do {
+   play_note(5, d5, eit);
+   play_note(5, d6, eit);
+   play_note(5, a5, eit);
+   play_note(5, g5, eit);
+   play_note(5, g6, eit);
+   play_note(5, a5, eit);
+   play_note(5, f6, eit);
+   play_note(5, a5, eit);
+  } while (payloadServo.buttonPressed() == false);
+  delay (1000);
+  myaltimeter.alarm(1, 1000, 2000); 
 }
 
 void loop() {
@@ -50,12 +107,12 @@ void loop() {
   }
 
   if (current_height >= 50 && current_height <= 60) { //when the altimeter reads
-    payloadServo.beginTimer(15000); //anything between 50 and 60 meters, it will start a 15 sec.
+    reachedAltitude = true; //anything between 50 and 60 meters, it will start a 15 sec.
     //timer that will be used for later. This will ensure that the servo does not take any pictures
     //going up but when going down.
   }
 
-  if (current_height < 45 && payloadServo.timerExpired()==true && current_height > 30) {
+  if (current_height < 45 && reachedAltitude==true && current_height > 30) {
     payloadServo.getPicture(); //after 15 seconds, camera will take pictures between heights of
                       //45 meters and 30 meters
     payloadServo.beginTimer(5000); //timer starts over for 5 seconds
@@ -74,3 +131,18 @@ void loop() {
     rangeSensor.alarm(2, 2000, 500);
   }
 }
+
+
+//function for a rest, the variable allows for the option of a quarter or eighth rest
+void rest(int len) {
+  delay(len);
+}
+
+//function for playing notes to make it more simple, plays the desired notes on pin 12 with the specific timing wanted
+void play_note(int pin, int note, int len) {
+    tone(pin, note);
+    delay(len);
+    noTone(pin);
+    delay(qt/10);
+}
+
