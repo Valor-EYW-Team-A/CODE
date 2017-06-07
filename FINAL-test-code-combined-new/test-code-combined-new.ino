@@ -109,17 +109,17 @@ void loop() {
     //When system is less than 3 meters it will stop high pitched alarm
   }
 
-  if (current_height >= 17 && current_height <=20) { //when the altimeter reads
+  if (current_height >= 7 && current_height <=10) { //when the altimeter reads
     reachedAltitude = true; //anything between 50 and 60 meters, it will start a 15 sec.
     //timer that will be used for later. This will ensure that the servo does not take any pictures
     //going up but when going down.
-    beginTimer(5000);
+    beginTimer(50000);
   }
 
-  if (current_height < 24 && reachedAltitude==true && current_height > 10 && checkTimer() == true) {
-    payloadServo.motor.write(150);
-    delay(250);
+  if (current_height < 30 && reachedAltitude==true && current_height > 11 && checkTimer() == true) {
     payloadServo.motor.write(90);
+    delay(1500);
+    payloadServo.motor.write(150);
     beginTimer(500);
   }
 
@@ -164,4 +164,5 @@ bool checkTimer() {
     return false;
   }
 }
+
 
